@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">AppVente</string>
+
+    <string name="ajouter_vendeur">Ajouter un vendeur</string>
+    <string name="modifier_vendeur">Modifier le vendeur</string>
+    <string name="nom_vendeur">Nom du vendeur</string>
+    <string name="date_naissance">Date de naissance</string>
+    <string name="photo_vendeur">Photo du vendeur</string>
+    <string name="choisir_photo">Choisir une photo</string>
+    <string name="enregistrer">Enregistrer</string>
+    <string name="modifier">Modifier</string>
+    <string name="supprimer">Supprimer</string>
+    <string name="rechercher">Rechercher</string>
+    <string name="rechercher_hint">Rechercher un vendeur par nom…</string>
+    <string name="champ_obligatoire">Ce champ est obligatoire</string>
+    <string name="date_obligatoire">Veuillez choisir une date de naissance</string>
+    <string name="date_future">La date de naissance ne peut pas être dans le futur</string>
+    <string name="nom_trop_court">Le nom doit contenir au moins 2 caractères</string>
+    <string name="aucun_vendeur">Aucun vendeur pour le moment.\nAppuyez sur + pour en ajouter un.</string>
+    <string name="aucun_resultat">Aucun résultat pour « %1$s ».</string>
+    <string name="vendeur_ajoute">Vendeur ajouté</string>
+    <string name="vendeur_modifie">Vendeur modifié</string>
+    <string name="vendeur_supprime">Vendeur supprimé</string>
+    <string name="supprimer_titre">Supprimer le vendeur</string>
+    <string name="supprimer_message">Voulez-vous vraiment supprimer %1$s ?</string>
+    <string name="oui">Oui</string>
+    <string name="non">Non</string>
+    <string name="quitter_titre">Quitter sans enregistrer ?</string>
+    <string name="quitter_message">Vos modifications n\'ont pas été enregistrées. Voulez-vous vraiment quitter ?</string>
+    <string name="quitter">Quitter</string>
+    <string name="annuler">Annuler</string>
+    <string name="titre_avec_compte">%1$s (%2$d)</string>
+    <string name="sous_titre_liste">Gestion des vendeurs</string>
+    <string name="informations_vendeur">Informations du vendeur</string>
+    <string name="changer_photo">Changer la photo</string>
+    <string name="ajouter_court">Ajouter</string>
+    <string name="ajouter_premier_vendeur">Ajouter un vendeur</string>
+    <string name="exemple_nom">Ex : Rakoto Jean</string>
+
+    <!-- Nouveaux messages pour la validation de l'âge -->
+    <string name="age_minimum">La personne doit avoir au moins %d ans</string>
+    <string name="age_maximum">La personne ne peut pas avoir plus de %d ans</string>
+</resources>

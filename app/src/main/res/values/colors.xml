@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Palette principale -->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#2C3B94</color>
+    <color name="colorPrimaryLight">#C5CAE9</color>
+    <color name="colorAccent">#FF7043</color>
+    <color name="colorAccentDark">#E64A19</color>
+
+    <!-- Fond et surfaces -->
+    <color name="colorBackground">#F4F5FA</color>
+    <color name="colorSurface">#FFFFFFFF</color>
+    <color name="colorCardBackground">#FFFFFFFF</color>
+
+    <!-- Textes -->
+    <color name="colorTextPrimary">#212121</color>
+    <color name="colorTextSecondary">#75757A</color>
+    <color name="colorTextOnPrimary">#FFFFFFFF</color>
+
+    <!-- Etats / actions -->
+    <color name="colorDelete">#E53935</color>
+    <color name="colorEdit">#3F51B5</color>
+    <color name="colorSuccess">#43A047</color>
+    <color name="colorError">#D32F2F</color>
+    <color name="colorDivider">#E0E0E0</color>
+    <color name="colorPhotoBackground">#E8EAF6</color>
+    <color name="colorPhotoStroke">#C5CAE9</color>
+    <color name="colorSubtitleOnPrimary">#D0D4F5</color>
+</resources>

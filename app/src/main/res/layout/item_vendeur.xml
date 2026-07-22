@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginBottom="6dp"
+    android:checkable="false"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/colorCardBackground"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:rippleColor="@color/colorPrimaryLight"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="14dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:clipChildren="true"
+            android:clipToOutline="true"
+            app:cardCornerRadius="29dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/imgPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/photo_vendeur"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_person_placeholder" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtNom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Rakoto Jean" />
+
+            <TextView
+                android:id="@+id/txtDatenais"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="13sp"
+                tools:text="Né(e) le 12/05/1990" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnModifier"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/modifier"
+            android:padding="7dp"
+            android:src="@android:drawable/ic_menu_edit"
+            app:tint="@color/colorEdit" />
+
+        <ImageView
+            android:id="@+id/btnSupprimer"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/supprimer"
+            android:padding="7dp"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="@color/colorDelete" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
