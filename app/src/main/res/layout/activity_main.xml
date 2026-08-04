@@ -97,6 +97,24 @@
 
         </LinearLayout>
 
+        <!-- Barre de recherche : champ arrondi bien visible sous la bannière -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="22dp"
+            android:background="@drawable/bg_search_view"
+            android:minHeight="50dp"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="6dp"
+            app:iconifiedByDefault="false"
+            app:queryBackground="@android:color/transparent"
+            app:queryHint="@string/rechercher_hint"
+            app:searchHintIcon="@drawable/ic_search"
+            app:theme="@style/ThemeOverlay.AppVente.SearchView" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
