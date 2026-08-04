@@ -16,9 +16,9 @@ public final class AvatarUtils {
 
     /** Palette de couleurs agréables, choisies pour bien contraster avec du texte blanc. */
     private static final int[] PALETTE = {
-            0xFF3F51B5, 0xFF009688, 0xFFFF7043, 0xFF8E24AA,
-            0xFF3949AB, 0xFF00897B, 0xFFD81B60, 0xFF5E35B1,
-            0xFF1E88E5, 0xFF43A047
+            0xFF4F46E5, 0xFF7C3AED, 0xFF0EA5E9, 0xFF10B981,
+            0xFFF59E0B, 0xFFEC4899, 0xFF6366F1, 0xFF06B6D4,
+            0xFF8B5CF6, 0xFF22C55E
     };
 
     private AvatarUtils() {

@@ -3,30 +3,38 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Palette principale -->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#2C3B94</color>
-    <color name="colorPrimaryLight">#C5CAE9</color>
-    <color name="colorAccent">#FF7043</color>
-    <color name="colorAccentDark">#E64A19</color>
+    <!-- Palette principale : indigo moderne -->
+    <color name="colorPrimary">#4F46E5</color>
+    <color name="colorPrimaryDark">#4338CA</color>
+    <color name="colorPrimaryLight">#C7D2FE</color>
+    <color name="colorAccent">#06B6D4</color>
+    <color name="colorAccentDark">#0E7490</color>
+
+    <!-- Dégradés -->
+    <color name="colorGradientStart">#4338CA</color>
+    <color name="colorGradientEnd">#7C3AED</color>
 
     <!-- Fond et surfaces -->
-    <color name="colorBackground">#F4F5FA</color>
-    <color name="colorSurface">#FFFFFFFF</color>
-    <color name="colorCardBackground">#FFFFFFFF</color>
+    <color name="colorBackground">#F3F4F9</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorCardBackground">#FFFFFF</color>
 
     <!-- Textes -->
-    <color name="colorTextPrimary">#212121</color>
-    <color name="colorTextSecondary">#75757A</color>
-    <color name="colorTextOnPrimary">#FFFFFFFF</color>
+    <color name="colorTextPrimary">#1E293B</color>
+    <color name="colorTextSecondary">#64748B</color>
+    <color name="colorTextOnPrimary">#FFFFFF</color>
 
     <!-- Etats / actions -->
-    <color name="colorDelete">#E53935</color>
-    <color name="colorEdit">#3F51B5</color>
-    <color name="colorSuccess">#43A047</color>
-    <color name="colorError">#D32F2F</color>
-    <color name="colorDivider">#E0E0E0</color>
-    <color name="colorPhotoBackground">#E8EAF6</color>
-    <color name="colorPhotoStroke">#C5CAE9</color>
-    <color name="colorSubtitleOnPrimary">#D0D4F5</color>
+    <color name="colorDelete">#EF4444</color>
+    <color name="colorEdit">#4F46E5</color>
+    <color name="colorSuccess">#22C55E</color>
+    <color name="colorError">#DC2626</color>
+    <color name="colorDivider">#E2E8F0</color>
+    <color name="colorPhotoBackground">#EEF2FF</color>
+    <color name="colorPhotoStroke">#C7D2FE</color>
+    <color name="colorSubtitleOnPrimary">#E0E7FF</color>
+
+    <!-- Fonds d'icônes d'action -->
+    <color name="colorEditBg">#EEF2FF</color>
+    <color name="colorDeleteBg">#FEE2E2</color>
 </resources>

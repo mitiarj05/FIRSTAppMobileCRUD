@@ -1,7 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.AppVente" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- L'application reste en thème clair, même en mode sombre du système,
+         pour garantir un rendu professionnel et cohérent. -->
+    <style name="Base.Theme.AppVente" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/colorTextOnPrimary</item>
+        <item name="colorPrimaryContainer">@color/colorPrimaryLight</item>
+        <item name="colorOnPrimaryContainer">@color/colorPrimaryDark</item>
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/colorSurface</item>
+        <item name="colorOnSurface">@color/colorTextPrimary</item>
+        <item name="colorSurfaceVariant">@color/colorPhotoBackground</item>
+        <item name="colorOnSurfaceVariant">@color/colorTextSecondary</item>
+        <item name="colorError">@color/colorError</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+
+        <item name="materialButtonStyle">@style/Widget.AppVente.Button</item>
+        <item name="materialCardViewStyle">@style/Widget.AppVente.Card</item>
+        <item name="textInputStyle">@style/Widget.AppVente.TextInput</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.AppVente.Dialog</item>
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.AppVente.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.AppVente.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.AppVente.Large</item>
     </style>
 </resources>

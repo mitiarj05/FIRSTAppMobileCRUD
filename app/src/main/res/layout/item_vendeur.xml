@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="12dp"
+    android:layout_marginStart="16dp"
     android:layout_marginTop="6dp"
-    android:layout_marginEnd="12dp"
+    android:layout_marginEnd="16dp"
     android:layout_marginBottom="6dp"
     android:checkable="false"
     android:clickable="true"
     android:focusable="true"
     app:cardBackgroundColor="@color/colorCardBackground"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="1.5dp"
     app:rippleColor="@color/colorPrimaryLight"
     app:strokeWidth="0dp">
 
@@ -25,11 +25,11 @@
         android:padding="14dp">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="58dp"
-            android:layout_height="58dp"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
             android:clipChildren="true"
             android:clipToOutline="true"
-            app:cardCornerRadius="29dp"
+            app:cardCornerRadius="27dp"
             app:cardElevation="0dp">
 
             <ImageView
@@ -64,34 +64,36 @@
                 android:id="@+id/txtDatenais"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="4dp"
                 android:drawablePadding="6dp"
+                android:drawableStart="@drawable/ic_calendar"
                 android:gravity="center_vertical"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="13sp"
+                app:drawableTint="@color/colorTextSecondary"
                 tools:text="Né(e) le 12/05/1990" />
 
         </LinearLayout>
 
         <ImageView
             android:id="@+id/btnModifier"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginEnd="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_icon_edit"
             android:contentDescription="@string/modifier"
-            android:padding="7dp"
-            android:src="@android:drawable/ic_menu_edit"
+            android:padding="9dp"
+            android:src="@drawable/ic_edit"
             app:tint="@color/colorEdit" />
 
         <ImageView
             android:id="@+id/btnSupprimer"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_icon_delete"
             android:contentDescription="@string/supprimer"
-            android:padding="7dp"
-            android:src="@android:drawable/ic_menu_delete"
+            android:padding="9dp"
+            android:src="@drawable/ic_delete"
             app:tint="@color/colorDelete" />
 
     </LinearLayout>

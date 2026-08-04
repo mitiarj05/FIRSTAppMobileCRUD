@@ -14,13 +14,18 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "appvente.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_VENDEUR = "VENDEUR";
     public static final String COL_ID = "idvend";
     public static final String COL_NOM = "nom";
     public static final String COL_DATENAIS = "datenais";
     public static final String COL_PHOTO = "photo";
+
+    public static final String TABLE_UTILISATEUR = "UTILISATEUR";
+    public static final String COL_ID_USER = "id_user";
+    public static final String COL_EMAIL = "email";
+    public static final String COL_MOT_DE_PASSE = "mot_de_passe";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -35,12 +40,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_PHOTO + " TEXT" +
                 ")";
         db.execSQL(createTable);
+
+        String createTableUtilisateur = "CREATE TABLE " + TABLE_UTILISATEUR + " (" +
+                COL_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_NOM + " TEXT NOT NULL, " +
+                COL_EMAIL + " TEXT NOT NULL UNIQUE, " +
+                COL_MOT_DE_PASSE + " TEXT NOT NULL" +
+                ")";
+        db.execSQL(createTableUtilisateur);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VENDEUR);
-        onCreate(db);
+        if (oldVersion < 2) {
+            String createTableUtilisateur = "CREATE TABLE IF NOT EXISTS " + TABLE_UTILISATEUR + " (" +
+                    COL_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COL_NOM + " TEXT NOT NULL, " +
+                    COL_EMAIL + " TEXT NOT NULL UNIQUE, " +
+                    COL_MOT_DE_PASSE + " TEXT NOT NULL" +
+                    ")";
+            db.execSQL(createTableUtilisateur);
+        }
     }
 
     public long ajouterVendeur(Vendeur vendeur) {
@@ -95,6 +115,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void supprimerVendeur(int idvend) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_VENDEUR, COL_ID + " = ?", new String[]{String.valueOf(idvend)});
+    }
+
+    /** Ajoute un nouveau compte utilisateur. Retourne l'id créé, ou -1 si l'email existe déjà. */
+    public long ajouterUtilisateur(String nom, String email, String motDePasse) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NOM, nom);
+        values.put(COL_EMAIL, email);
+        values.put(COL_MOT_DE_PASSE, PasswordUtils.hashPassword(motDePasse));
+        return db.insert(TABLE_UTILISATEUR, null, values);
+    }
+
+    /** Vrai si un compte utilise déjà cet email. */
+    public boolean emailExiste(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_UTILISATEUR +
+                " WHERE " + COL_EMAIL + " = ?", new String[]{email});
+        boolean existe = cursor.moveToFirst();
+        cursor.close();
+        return existe;
+    }
+
+    /** Vérifie les identifiants et retourne l'utilisateur si le couple email/mot de passe est valide. */
+    public Utilisateur verifierIdentifiants(String email, String motDePasse) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_UTILISATEUR +
+                        " WHERE " + COL_EMAIL + " = ? AND " + COL_MOT_DE_PASSE + " = ?",
+                new String[]{email, PasswordUtils.hashPassword(motDePasse)});
+
+        Utilisateur utilisateur = null;
+        if (cursor.moveToFirst()) {
+            utilisateur = new Utilisateur(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ID_USER)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_NOM)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_EMAIL))
+            );
+        }
+        cursor.close();
+        return utilisateur;
     }
 
     private Vendeur mapCursorVersVendeur(Cursor cursor) {

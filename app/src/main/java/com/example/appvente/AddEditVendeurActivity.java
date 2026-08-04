@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -142,6 +144,22 @@ public class AddEditVendeurActivity extends AppCompatActivity {
         });
 
         btnEnregistrer.setOnClickListener(v -> enregistrer());
+
+        jouerAnimationsEntree();
+    }
+
+    /** Anime l'apparition successive de la photo, de la carte puis du bouton d'enregistrement. */
+    private void jouerAnimationsEntree() {
+        Animation photo = AnimationUtils.loadAnimation(this, R.anim.anim_fade_in_up);
+        imgPhoto.startAnimation(photo);
+
+        Animation carte = AnimationUtils.loadAnimation(this, R.anim.anim_fade_in_up);
+        carte.setStartOffset(120);
+        findViewById(R.id.cardInfos).startAnimation(carte);
+
+        Animation bouton = AnimationUtils.loadAnimation(this, R.anim.anim_fade_in_up);
+        bouton.setStartOffset(220);
+        btnEnregistrer.startAnimation(bouton);
     }
 
     /** Premier lancement de l'écran (pas une rotation) : pré-remplissage depuis l'Intent si modification. */
@@ -224,18 +242,24 @@ public class AddEditVendeurActivity extends AppCompatActivity {
                 || !Objects.equals(photoActuelle, initialPhotoUriStr);
     }
 
-    /** Ferme l'écran, en demandant confirmation si des données n'ont pas été enregistrées. */
+    /** Ferme l'écran en demandant confirmation si des données n'ont pas été enregistrées. */
     private void confirmerFermeture() {
         if (formulaireModifie()) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.quitter_titre)
                     .setMessage(R.string.quitter_message)
-                    .setPositiveButton(R.string.quitter, (dialog, which) -> finish())
+                    .setPositiveButton(R.string.quitter, (dialog, which) -> quitter())
                     .setNegativeButton(R.string.annuler, null)
                     .show();
         } else {
-            finish();
+            quitter();
         }
+    }
+
+    /** Ferme l'écran avec la transition de retour animée. */
+    private void quitter() {
+        finish();
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
     }
 
     @Override

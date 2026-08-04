@@ -40,4 +40,37 @@
     <!-- Nouveaux messages pour la validation de l'âge -->
     <string name="age_minimum">La personne doit avoir au moins %d ans</string>
     <string name="age_maximum">La personne ne peut pas avoir plus de %d ans</string>
+
+    <!-- Connexion et inscription -->
+    <string name="connexion_titre">Connexion</string>
+    <string name="connexion_sous_titre">Gérez vos vendeurs en toute sécurité</string>
+    <string name="inscription_titre">Inscription</string>
+    <string name="inscription_sous_titre">Créez un compte pour commencer</string>
+    <string name="nom_complet">Nom complet</string>
+    <string name="email">Email</string>
+    <string name="mot_de_passe">Mot de passe</string>
+    <string name="confirmation_mot_de_passe">Confirmer le mot de passe</string>
+    <string name="se_connecter">Se connecter</string>
+    <string name="creer_compte">Créer mon compte</string>
+    <string name="pas_de_compte">Pas encore de compte ?</string>
+    <string name="deja_un_compte">Déjà un compte ?</string>
+    <string name="s_inscrire">S\'inscrire</string>
+    <string name="email_invalide">Adresse email invalide</string>
+    <string name="mot_de_passe_court">Le mot de passe doit contenir au moins 6 caractères</string>
+    <string name="mdp_non_conforme">Les mots de passe ne correspondent pas</string>
+    <string name="identifiants_incorrects">Email ou mot de passe incorrect</string>
+    <string name="email_deja_utilise">Un compte existe déjà avec cet email</string>
+    <string name="compte_cree">Compte créé, vous pouvez vous connecter</string>
+    <string name="connexion_reussie">Connexion réussie. Bonjour %1$s !</string>
+    <string name="se_deconnecter">Se déconnecter</string>
+    <string name="deconnexion_reussie">Vous êtes déconnecté</string>
+    <string name="deconnexion_confirmer_titre">Se déconnecter ?</string>
+    <string name="deconnexion_confirmer_message">Voulez-vous vraiment vous déconnecter de votre compte, %1$s ?</string>
+
+    <!-- En-tête d'accueil -->
+    <string name="bonjour">Bonjour, %1$s !</string>
+    <plurals name="compte_vendeurs">
+        <item quantity="one">%d vendeur enregistré</item>
+        <item quantity="other">%d vendeurs enregistrés</item>
+    </plurals>
 </resources>
