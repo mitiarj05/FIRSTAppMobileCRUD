@@ -7,11 +7,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,7 +37,8 @@ import java.util.List;
 /**
  * Écran principal : affiche la liste des vendeurs (lecture), permet
  * de lancer l'ajout, la modification et la suppression (bouton ou glisser
- * la carte vers la gauche), ainsi que la recherche par nom via la Toolbar.
+ * la carte vers la gauche), ainsi que la recherche par nom via la barre
+ * de recherche dédiée.
  */
 public class MainActivity extends AppCompatActivity implements VendeurAdapter.OnVendeurClickListener {
 
@@ -118,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
         fabAjouter.setOnClickListener(ouvrirAjout);
         findViewById(R.id.btnAjouterVide).setOnClickListener(ouvrirAjout);
 
+        configurerRecherche();
+
         chargerListe();
     }
 
@@ -195,13 +197,17 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
         chargerListe();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem itemRecherche = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) itemRecherche.getActionView();
+    /** Initialise la barre de recherche et ses couleurs pour rester lisible sur fond blanc. */
+    private void configurerRecherche() {
+        SearchView searchView = findViewById(R.id.searchBar);
+        searchView.setIconifiedByDefault(false);
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setQueryHint(getString(R.string.rechercher_hint));
+
+        EditText champRecherche = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        champRecherche.setTextColor(ContextCompat.getColor(this, R.color.colorTextPrimary));
+        champRecherche.setHintTextColor(ContextCompat.getColor(this, R.color.colorTextSecondary));
+        champRecherche.setTextSize(16);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -216,8 +222,6 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
                 return true;
             }
         });
-
-        return true;
     }
 
     /** Déconnecte l'utilisateur, après confirmation, puis revient à l'écran de connexion. */

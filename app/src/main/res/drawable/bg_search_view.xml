@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Ombre douce sous la barre de recherche -->
+    <item android:top="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#2E1E293B" />
+            <corners android:radius="26dp" />
+        </shape>
+    </item>
+    <!-- Fond blanc de la barre -->
+    <item android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorSurface" />
+            <corners android:radius="26dp" />
+        </shape>
+    </item>
+</layer-list>
