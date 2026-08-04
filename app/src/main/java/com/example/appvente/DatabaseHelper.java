@@ -156,6 +156,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return utilisateur;
     }
 
+    /** Remplace le mot de passe (haché) d'un compte existant. Retourne le nombre de lignes modifiées. */
+    public int modifierMotDePasse(String email, String motDePasse) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_MOT_DE_PASSE, PasswordUtils.hashPassword(motDePasse));
+        return db.update(TABLE_UTILISATEUR, values, COL_EMAIL + " = ?", new String[]{email});
+    }
+
     private Vendeur mapCursorVersVendeur(Cursor cursor) {
         return new Vendeur(
                 cursor.getInt(cursor.getColumnIndexOrThrow(COL_ID)),

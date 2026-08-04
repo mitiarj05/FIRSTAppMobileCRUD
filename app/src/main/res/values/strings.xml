@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">AppVente</string>
 
+    <!-- Connexion sociale : à remplacer par vos vraies valeurs Firebase / Facebook -->
+    <string name="facebook_app_id" translatable="false">000000000000000</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb000000000000000</string>
+    <string name="facebook_client_token" translatable="false">00000000000000000000000000000000</string>
+
     <string name="ajouter_vendeur">Ajouter un vendeur</string>
     <string name="modifier_vendeur">Modifier le vendeur</string>
     <string name="nom_vendeur">Nom du vendeur</string>
@@ -66,6 +71,26 @@
     <string name="deconnexion_reussie">Vous êtes déconnecté</string>
     <string name="deconnexion_confirmer_titre">Se déconnecter ?</string>
     <string name="deconnexion_confirmer_message">Voulez-vous vraiment vous déconnecter de votre compte, %1$s ?</string>
+
+    <!-- Connexion sociale (Google / Facebook) -->
+    <string name="ou_continuer_avec">ou continuer avec</string>
+    <string name="se_connecter_google">Se connecter avec Google</string>
+    <string name="se_connecter_facebook">Se connecter avec Facebook</string>
+    <string name="erreur_connexion_google">Connexion Google annulée ou échouée</string>
+    <string name="erreur_connexion_facebook">Connexion Facebook annulée ou échouée</string>
+    <string name="erreur_connexion_sociale">Connexion impossible pour le moment</string>
+    <string name="social_non_config">Connexion sociale non configurée</string>
+    <string name="utilisateur">Utilisateur</string>
+
+    <!-- Mot de passe oublié -->
+    <string name="mot_de_passe_oublie">Mot de passe oublié ?</string>
+    <string name="mot_de_passe_oublie_titre">Mot de passe oublié</string>
+    <string name="mot_de_passe_oublie_sous_titre">Saisissez votre email puis choisissez un nouveau mot de passe.</string>
+    <string name="nouveau_mot_de_passe">Nouveau mot de passe</string>
+    <string name="confirmer_nouveau_mot_de_passe">Confirmer le nouveau mot de passe</string>
+    <string name="reinitialiser">Réinitialiser le mot de passe</string>
+    <string name="email_inexistant">Aucun compte ne correspond à cet email</string>
+    <string name="mot_de_passe_reinitialise">Mot de passe réinitialisé. Vous pouvez vous connecter.</string>
 
     <!-- En-tête d'accueil -->
     <string name="bonjour">Bonjour, %1$s !</string>
