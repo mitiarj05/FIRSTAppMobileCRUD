@@ -1,5 +1,6 @@
 package com.example.appvente;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -32,7 +33,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Écran principal : affiche la liste des vendeurs (lecture), permet
@@ -54,9 +60,20 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
     private Toolbar toolbar;
     private ExtendedFloatingActionButton fabAjouter;
     private SessionManager sessionManager;
+    private SearchView searchView;
+    private TextView txtDateDebutFiltre;
+    private TextView txtDateFinFiltre;
+    private ImageView btnEffacerFiltre;
 
     /** Mémorise la recherche en cours, pour savoir quel message vide afficher. */
     private String rechercheEnCours = "";
+
+    /** Bornes du filtre de date de naissance (au format "yyyy-MM-dd"). */
+    private String filtreDateDebut = "";
+    private String filtreDateFin = "";
+
+    private static final SimpleDateFormat FORMAT_DATE_STOCKAGE = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private static final SimpleDateFormat FORMAT_DATE_AFFICHAGE = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     public static final String EXTRA_ID = "extra_id";
     public static final String EXTRA_NOM = "extra_nom";
@@ -145,8 +162,11 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
     /** Recharge la liste complète depuis la base (utilisé au démarrage et après CRUD). */
     private void chargerListe() {
         rechercheEnCours = "";
-        List<Vendeur> vendeurs = dbHelper.getTousLesVendeurs();
-        afficherResultats(vendeurs);
+        filtreDateDebut = "";
+        filtreDateFin = "";
+        searchView.setQuery("", false);
+        miseAJourAffichageFiltres();
+        appliquerFiltres();
         // Anime l'apparition des cartes (sauf pendant une recherche en direct).
         recyclerView.scheduleLayoutAnimation();
     }
@@ -182,8 +202,10 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
         }
 
         if (vide) {
-            if (rechercheEnCours.isEmpty()) {
+            if (rechercheEnCours.isEmpty() && !filtreDateActif()) {
                 txtListeVide.setText(R.string.aucun_vendeur);
+            } else if (rechercheEnCours.isEmpty()) {
+                txtListeVide.setText(R.string.aucun_resultat_filtre);
             } else {
                 txtListeVide.setText(getString(R.string.aucun_resultat, rechercheEnCours));
             }
@@ -199,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
 
     /** Initialise la barre de recherche et ses couleurs pour rester lisible sur fond blanc. */
     private void configurerRecherche() {
-        SearchView searchView = findViewById(R.id.searchBar);
+        searchView = findViewById(R.id.searchBar);
         searchView.setIconifiedByDefault(false);
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setQueryHint(getString(R.string.rechercher_hint));
@@ -222,6 +244,93 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
                 return true;
             }
         });
+
+        configurerFiltreDates();
+    }
+
+    /** Filtre la liste par date de naissance : deux bornes (début et fin) via un calendrier. */
+    private void configurerFiltreDates() {
+        txtDateDebutFiltre = findViewById(R.id.txtDateDebutFiltre);
+        txtDateFinFiltre = findViewById(R.id.txtDateFinFiltre);
+        btnEffacerFiltre = findViewById(R.id.btnEffacerFiltre);
+
+        txtDateDebutFiltre.setOnClickListener(v -> afficherDatePickerFiltre(true));
+        txtDateFinFiltre.setOnClickListener(v -> afficherDatePickerFiltre(false));
+        btnEffacerFiltre.setOnClickListener(v -> {
+            filtreDateDebut = "";
+            filtreDateFin = "";
+            miseAJourAffichageFiltres();
+            appliquerFiltres();
+        });
+    }
+
+    /** Ouvre le calendrier pour choisir la borne de début (estDebut) ou de fin du filtre. */
+    private void afficherDatePickerFiltre(boolean estDebut) {
+        Calendar calendrier = Calendar.getInstance();
+        String dateActuelle = estDebut ? filtreDateDebut : filtreDateFin;
+        if (!dateActuelle.isEmpty()) {
+            try {
+                Date date = FORMAT_DATE_STOCKAGE.parse(dateActuelle);
+                if (date != null) {
+                    calendrier.setTime(date);
+                }
+            } catch (ParseException ignored) {
+            }
+        }
+
+        DatePickerDialog dialog = new DatePickerDialog(this,
+                (view, selYear, selMonth, selDay) -> {
+                    String date = String.format(Locale.getDefault(),
+                            "%04d-%02d-%02d", selYear, selMonth + 1, selDay);
+                    if (estDebut) {
+                        filtreDateDebut = date;
+                    } else {
+                        filtreDateFin = date;
+                    }
+                    // Si les deux bornes sont définies dans le mauvais ordre, on les réajuste.
+                    if (!filtreDateDebut.isEmpty() && !filtreDateFin.isEmpty()
+                            && filtreDateDebut.compareTo(filtreDateFin) > 0) {
+                        if (estDebut) {
+                            filtreDateFin = filtreDateDebut;
+                        } else {
+                            filtreDateDebut = filtreDateFin;
+                        }
+                    }
+                    miseAJourAffichageFiltres();
+                    appliquerFiltres();
+                },
+                calendrier.get(Calendar.YEAR),
+                calendrier.get(Calendar.MONTH),
+                calendrier.get(Calendar.DAY_OF_MONTH));
+
+        // Une date de naissance ne peut pas être dans le futur.
+        dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+        dialog.show();
+    }
+
+    /** Affiche les bornes choisies dans les champs (ou le libellé "Du/Au" si vide). */
+    private void miseAJourAffichageFiltres() {
+        txtDateDebutFiltre.setText(filtreDateDebut.isEmpty()
+                ? getString(R.string.date_debut_filtre)
+                : formaterDateFiltre(filtreDateDebut));
+        txtDateFinFiltre.setText(filtreDateFin.isEmpty()
+                ? getString(R.string.date_fin_filtre)
+                : formaterDateFiltre(filtreDateFin));
+    }
+
+    private boolean filtreDateActif() {
+        return !filtreDateDebut.isEmpty() || !filtreDateFin.isEmpty();
+    }
+
+    private String formaterDateFiltre(String dateStockage) {
+        try {
+            Date date = FORMAT_DATE_STOCKAGE.parse(dateStockage);
+            if (date != null) {
+                return FORMAT_DATE_AFFICHAGE.format(date);
+            }
+        } catch (ParseException ignored) {
+        }
+        return dateStockage;
     }
 
     /** Déconnecte l'utilisateur, après confirmation, puis revient à l'écran de connexion. */
@@ -250,15 +359,19 @@ public class MainActivity extends AppCompatActivity implements VendeurAdapter.On
         dialog.show();
     }
 
-    /** Filtre la liste par nom (recherche en direct, insensible à la casse). */
+    /**
+     * Filtre la liste par nom (recherche en direct, insensible à la casse)
+     * et par plage de dates de naissance.
+     */
     private void rechercher(String motCle) {
         rechercheEnCours = motCle == null ? "" : motCle.trim();
-        List<Vendeur> resultats;
-        if (rechercheEnCours.isEmpty()) {
-            resultats = dbHelper.getTousLesVendeurs();
-        } else {
-            resultats = dbHelper.rechercherVendeurParNom(rechercheEnCours);
-        }
+        appliquerFiltres();
+    }
+
+    /** Applique les critères actifs (nom/date + plage de naissance) et met à jour la liste. */
+    private void appliquerFiltres() {
+        List<Vendeur> resultats = dbHelper.rechercherVendeurs(
+                rechercheEnCours, filtreDateDebut, filtreDateFin);
         afficherResultats(resultats);
     }
 

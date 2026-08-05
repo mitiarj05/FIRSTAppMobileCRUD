@@ -2,6 +2,7 @@ package com.example.appvente;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -67,6 +69,10 @@ public class AddEditVendeurActivity extends AppCompatActivity {
     private String datenaisChoisie = "";
     private Uri photoUri = null;
 
+    // Taille du padding appliqué sur l'image quand aucune photo n'est choisie,
+    // pour laisser le pictogramme "personne" centré (voir le layout).
+    private static final int PADDING_PHOTO_DP = 30;
+
     private int idvend = 0; // 0 = nouveau vendeur (pas encore en base)
     private DatabaseHelper dbHelper;
 
@@ -87,8 +93,7 @@ public class AddEditVendeurActivity extends AppCompatActivity {
                     } catch (SecurityException ignored) {
                     }
                     photoUri = uri;
-                    imgPhoto.setImageURI(photoUri);
-                    txtChoisirPhotoLabel.setText(R.string.changer_photo);
+                    afficherPhoto(photoUri);
                 }
             });
 
@@ -162,6 +167,42 @@ public class AddEditVendeurActivity extends AppCompatActivity {
         btnEnregistrer.startAnimation(bouton);
     }
 
+    /**
+     * Affiche la photo choisie (ou le pictogramme de secours si aucune photo).
+     * Important : la teinte indigo (app:tint) et le padding du layout sont
+     * supprimés dès qu'une vraie photo est affichée, sinon ils la coloriseraient
+     * entièrement en bleu et l'image serait illisible.
+     */
+    private void afficherPhoto(Uri uri) {
+        if (uri == null) {
+            imgPhoto.setImageResource(R.drawable.ic_person_placeholder);
+            imgPhoto.setImageTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.colorPrimary)));
+            imgPhoto.setPadding(dp(PADDING_PHOTO_DP), dp(PADDING_PHOTO_DP),
+                    dp(PADDING_PHOTO_DP), dp(PADDING_PHOTO_DP));
+            txtChoisirPhotoLabel.setText(R.string.choisir_photo);
+            return;
+        }
+
+        try {
+            imgPhoto.setImageURI(uri);
+            imgPhoto.setImageTintList(null);
+            imgPhoto.setPadding(0, 0, 0, 0);
+            txtChoisirPhotoLabel.setText(R.string.changer_photo);
+        } catch (Exception e) {
+            imgPhoto.setImageResource(R.drawable.ic_person_placeholder);
+            imgPhoto.setImageTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.colorPrimary)));
+            imgPhoto.setPadding(dp(PADDING_PHOTO_DP), dp(PADDING_PHOTO_DP),
+                    dp(PADDING_PHOTO_DP), dp(PADDING_PHOTO_DP));
+            txtChoisirPhotoLabel.setText(R.string.choisir_photo);
+        }
+    }
+
+    private int dp(int valeurDp) {
+        return Math.round(valeurDp * getResources().getDisplayMetrics().density);
+    }
+
     /** Premier lancement de l'écran (pas une rotation) : pré-remplissage depuis l'Intent si modification. */
     private void initialiserFormulaire() {
         Intent intent = getIntent();
@@ -174,11 +215,7 @@ public class AddEditVendeurActivity extends AppCompatActivity {
             String photoExistante = intent.getStringExtra(MainActivity.EXTRA_PHOTO);
             if (photoExistante != null && !photoExistante.isEmpty()) {
                 photoUri = Uri.parse(photoExistante);
-                try {
-                    imgPhoto.setImageURI(photoUri);
-                } catch (Exception ignored) {
-                }
-                txtChoisirPhotoLabel.setText(R.string.changer_photo);
+                afficherPhoto(photoUri);
             }
             setTitle(R.string.modifier_vendeur);
         } else {
@@ -205,11 +242,7 @@ public class AddEditVendeurActivity extends AppCompatActivity {
         String photoTexte = savedInstanceState.getString(KEY_PHOTO_URI, "");
         if (!photoTexte.isEmpty()) {
             photoUri = Uri.parse(photoTexte);
-            try {
-                imgPhoto.setImageURI(photoUri);
-            } catch (Exception ignored) {
-            }
-            txtChoisirPhotoLabel.setText(R.string.changer_photo);
+            afficherPhoto(photoUri);
         }
 
         initialNom = savedInstanceState.getString(KEY_INITIAL_NOM, "");

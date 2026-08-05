@@ -12,6 +12,10 @@
     <string name="supprimer">Supprimer</string>
     <string name="rechercher">Rechercher</string>
     <string name="rechercher_hint">Rechercher un vendeur par nom…</string>
+    <string name="date_debut_filtre">Du (naissance)</string>
+    <string name="date_fin_filtre">Au (naissance)</string>
+    <string name="effacer_filtre">Effacer le filtre</string>
+    <string name="aucun_resultat_filtre">Aucun vendeur ne correspond aux critères de filtrage.</string>
     <string name="champ_obligatoire">Ce champ est obligatoire</string>
     <string name="date_obligatoire">Veuillez choisir une date de naissance</string>
     <string name="date_future">La date de naissance ne peut pas être dans le futur</string>

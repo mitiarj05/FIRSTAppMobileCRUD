@@ -8,8 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -88,10 +92,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<Vendeur> rechercherVendeurParNom(String motCle) {
+        return rechercherVendeurs(motCle, "", "");
+    }
+
+    /**
+     * Recherche les vendeurs en combinant un mot-clé sur le nom OU la date de
+     * naissance, ainsi qu'une plage de dates de naissance (au format "yyyy-MM-dd",
+     * comparaison lexicographique fiable car les dates sont stockées en toutes lettres).
+     */
+    public List<Vendeur> rechercherVendeurs(String motCle, String dateDebut, String dateFin) {
         List<Vendeur> liste = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_VENDEUR + " WHERE " + COL_NOM + " LIKE ? ORDER BY " + COL_NOM + " ASC";
+        StringBuilder query = new StringBuilder("SELECT * FROM " + TABLE_VENDEUR + " WHERE 1=1");
+        List<String> arguments = new ArrayList<>();
+
+        if (motCle != null && !motCle.trim().isEmpty()) {
+            String cle = motCle.trim();
+            // Le mot-clé peut être un nom, une année ("1990") ou une date de naissance.
+            query.append(" AND (").append(COL_NOM).append(" LIKE ? OR ").append(COL_DATENAIS).append(" LIKE ?");
+            arguments.add("%" + cle + "%");
+            arguments.add("%" + cle + "%");
+
+            // Recherche par date complète au format "jj/mm/aaaa".
+            String dateStockage = convertirEnDateStockage(cle);
+            if (dateStockage != null) {
+                query.append(" OR ").append(COL_DATENAIS).append(" = ?");
+                arguments.add(dateStockage);
+            }
+            query.append(")");
+        }
+        if (dateDebut != null && !dateDebut.isEmpty()) {
+            query.append(" AND ").append(COL_DATENAIS).append(" >= ?");
+            arguments.add(dateDebut);
+        }
+        if (dateFin != null && !dateFin.isEmpty()) {
+            query.append(" AND ").append(COL_DATENAIS).append(" <= ?");
+            arguments.add(dateFin);
+        }
+
+        query.append(" ORDER BY ").append(COL_NOM).append(" ASC");
+
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, new String[]{"%" + motCle + "%"});
+        Cursor cursor = db.rawQuery(query.toString(), arguments.toArray(new String[0]));
 
         if (cursor.moveToFirst()) {
             do {
@@ -100,6 +141,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return liste;
+    }
+
+    /** Convertit une date saisie en "jj/mm/aaaa" vers le format de stockage "aaaa-mm-jj". */
+    private String convertirEnDateStockage(String valeur) {
+        try {
+            SimpleDateFormat formatSaisie = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            formatSaisie.setLenient(false);
+            Date date = formatSaisie.parse(valeur);
+            if (date != null) {
+                return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
+            }
+        } catch (ParseException ignored) {
+        }
+        return null;
     }
 
     public int modifierVendeur(Vendeur vendeur) {

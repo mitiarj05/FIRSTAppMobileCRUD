@@ -98,22 +98,92 @@
         </LinearLayout>
 
         <!-- Barre de recherche : champ arrondi bien visible sous la bannière -->
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchBar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="22dp"
-            android:background="@drawable/bg_search_view"
-            android:minHeight="50dp"
-            android:paddingHorizontal="4dp"
-            android:paddingVertical="6dp"
-            app:iconifiedByDefault="false"
-            app:queryBackground="@android:color/transparent"
-            app:queryHint="@string/rechercher_hint"
-            app:searchHintIcon="@drawable/ic_search"
-            app:theme="@style/ThemeOverlay.AppVente.SearchView" />
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_search_view"
+                android:minHeight="50dp"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="6dp"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@android:color/transparent"
+                app:queryHint="@string/rechercher_hint"
+                app:searchHintIcon="@drawable/ic_search"
+                app:theme="@style/ThemeOverlay.AppVente.SearchView" />
+
+            <!-- Filtre par date de naissance : deux bornes de dates cliquables + bouton effacer -->
+            <LinearLayout
+                android:id="@+id/layoutFiltreDates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtDateDebutFiltre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_champ_date"
+                    android:clickable="true"
+                    android:drawablePadding="8dp"
+                    android:drawableStart="@drawable/ic_calendar"
+                    android:ellipsize="end"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:text="@string/date_debut_filtre"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/colorTextSecondary" />
+
+                <TextView
+                    android:id="@+id/txtDateFinFiltre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_champ_date"
+                    android:clickable="true"
+                    android:drawablePadding="8dp"
+                    android:drawableStart="@drawable/ic_calendar"
+                    android:ellipsize="end"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:text="@string/date_fin_filtre"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="13sp"
+                    app:drawableTint="@color/colorTextSecondary" />
+
+                <ImageView
+                    android:id="@+id/btnEffacerFiltre"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_icon_delete"
+                    android:contentDescription="@string/effacer_filtre"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/colorDelete" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
