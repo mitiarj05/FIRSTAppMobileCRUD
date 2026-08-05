@@ -8,14 +8,36 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Arrays;
 
 /**
  * Écran de connexion : vérifie les identifiants en base puis ouvre l'écran
@@ -31,6 +53,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
     private SessionManager sessionManager;
+
+    private FirebaseAuth firebaseAuth;
+    private GoogleSignInClient googleSignInClient;
+    private ActivityResultLauncher<Intent> googleSignInLauncher;
+    private CallbackManager facebookCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +88,20 @@ public class LoginActivity extends AppCompatActivity {
 
         jouerAnimationsEntree();
 
+        initialiserConnexionSociale();
+
         btnConnexion.setOnClickListener(v -> seConnecter());
+
+        findViewById(R.id.btnGoogle).setOnClickListener(v -> seConnecterGoogle());
+        findViewById(R.id.btnFacebook).setOnClickListener(v -> seConnecterFacebook());
 
         findViewById(R.id.txtInscription).setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+            overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+        });
+
+        findViewById(R.id.txtMotDePasseOublie).setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
             overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
         });
     }
@@ -118,6 +155,148 @@ public class LoginActivity extends AppCompatActivity {
         sessionManager.sauvegarderSession(utilisateur);
         Toast.makeText(this, getString(R.string.connexion_reussie, utilisateur.getNom()), Toast.LENGTH_SHORT).show();
         ouvrirPrincipal();
+    }
+
+    /** Initialise Firebase Auth puis les clients Google et Facebook. */
+    private void initialiserConnexionSociale() {
+        try {
+            if (FirebaseApp.getApps(this).isEmpty()) {
+                FirebaseApp.initializeApp(this);
+            }
+            firebaseAuth = FirebaseAuth.getInstance();
+        } catch (Exception e) {
+            firebaseAuth = null;
+        }
+        configurerGoogle();
+        configurerFacebook();
+    }
+
+    private void configurerGoogle() {
+        try {
+            int resId = getResources().getIdentifier("default_web_client_id", "string", getPackageName());
+            if (resId == 0) {
+                return;
+            }
+            String webClientId = getString(resId);
+            if (webClientId == null || webClientId.startsWith("000000000000")) {
+                return; // google-services.json de remplacement : pas encore configuré
+            }
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(webClientId)
+                    .requestEmail()
+                    .build();
+            googleSignInClient = GoogleSignIn.getClient(this, gso);
+            googleSignInLauncher = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            Task<GoogleSignInAccount> tache = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                            gererCompteGoogle(tache);
+                        }
+                    });
+        } catch (Exception e) {
+            googleSignInClient = null;
+        }
+    }
+
+    private void configurerFacebook() {
+        try {
+            if (!FacebookSdk.isInitialized()) {
+                return; // auto-initialisation via le manifeste : pas encore prête
+            }
+            facebookCallbackManager = CallbackManager.Factory.create();
+            LoginManager.getInstance().registerCallback(facebookCallbackManager,
+                    new FacebookCallback<LoginResult>() {
+                        @Override
+                        public void onSuccess(LoginResult loginResult) {
+                            String jeton = loginResult.getAccessToken().getToken();
+                            AuthCredential credential = FacebookAuthProvider.getCredential(jeton);
+                            seConnecterAvecCredential(credential, null, null);
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            // L'utilisateur a annulé la connexion : rien à faire.
+                        }
+
+                        @Override
+                        public void onError(FacebookException erreur) {
+                            Toast.makeText(LoginActivity.this, R.string.erreur_connexion_facebook, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } catch (Exception e) {
+            facebookCallbackManager = null;
+        }
+    }
+
+    private void seConnecterGoogle() {
+        if (googleSignInClient == null || googleSignInLauncher == null) {
+            Toast.makeText(this, R.string.social_non_config, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        googleSignInLauncher.launch(googleSignInClient.getSignInIntent());
+    }
+
+    private void seConnecterFacebook() {
+        if (facebookCallbackManager == null) {
+            Toast.makeText(this, R.string.social_non_config, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
+        } catch (Exception e) {
+            Toast.makeText(this, R.string.erreur_connexion_facebook, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void gererCompteGoogle(Task<GoogleSignInAccount> tache) {
+        try {
+            GoogleSignInAccount compte = tache.getResult(ApiException.class);
+            String idToken = compte.getIdToken();
+            if (idToken == null) {
+                Toast.makeText(this, R.string.erreur_connexion_google, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+            seConnecterAvecCredential(credential, compte.getDisplayName(), compte.getEmail());
+        } catch (ApiException e) {
+            Toast.makeText(this, R.string.erreur_connexion_google, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /** Connecte l'utilisateur via le credential Firebase, puis enregistre la session locale. */
+    private void seConnecterAvecCredential(AuthCredential credential, String nom, String email) {
+        if (firebaseAuth == null) {
+            Toast.makeText(this, R.string.social_non_config, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, tache -> {
+                    if (tache.isSuccessful()) {
+                        FirebaseUser utilisateur = firebaseAuth.getCurrentUser();
+                        String nomFinal = nom != null ? nom
+                                : (utilisateur != null && utilisateur.getDisplayName() != null
+                                ? utilisateur.getDisplayName() : getString(R.string.utilisateur));
+                        String emailFinal = email != null ? email
+                                : (utilisateur != null && utilisateur.getEmail() != null
+                                ? utilisateur.getEmail() : "");
+                        int id = utilisateur != null && utilisateur.getUid() != null
+                                ? (utilisateur.getUid().hashCode() & 0x7FFFFFFF) | 1 : 1;
+                        sessionManager.sauvegarderSession(new Utilisateur(id, nomFinal, emailFinal));
+                        Toast.makeText(this, getString(R.string.connexion_reussie, nomFinal), Toast.LENGTH_SHORT).show();
+                        ouvrirPrincipal();
+                    } else {
+                        Toast.makeText(this, R.string.erreur_connexion_sociale, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (facebookCallbackManager != null) {
+            facebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void ouvrirPrincipal() {
