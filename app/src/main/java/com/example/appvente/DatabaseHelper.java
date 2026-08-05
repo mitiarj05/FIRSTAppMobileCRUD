@@ -89,9 +89,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public List<Vendeur> rechercherVendeurParNom(String motCle) {
         List<Vendeur> liste = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_VENDEUR + " WHERE " + COL_NOM + " LIKE ? ORDER BY " + COL_NOM + " ASC";
+        // Recherche à la fois sur le nom et sur la date de naissance. Comme la date
+        // est stockée au format yyyy-MM-dd, on convertit l'éventuelle saisie dd/mm/yyyy
+        // pour pouvoir la retrouver, en plus des autres formats simples.
+        String motCleIso = convertirDateVersIso(motCle);
+        String patron = "%" + motCle + "%";
+        String patronIso = motCleIso.equals(motCle) ? patron : "%" + motCleIso + "%";
+
+        String query = "SELECT * FROM " + TABLE_VENDEUR + " WHERE " + COL_NOM + " LIKE ?" +
+                " OR " + COL_DATENAIS + " LIKE ?" +
+                " OR " + COL_DATENAIS + " LIKE ?" +
+                " ORDER BY " + COL_NOM + " ASC";
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, new String[]{"%" + motCle + "%"});
+        Cursor cursor = db.rawQuery(query, new String[]{patron, patron, patronIso});
 
         if (cursor.moveToFirst()) {
             do {
@@ -100,6 +110,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return liste;
+    }
+
+    /** Convertit une saisie de date dd/mm/yyyy (séparateurs / . -) en yyyy-MM-dd.
+     *  Renvoie la saisie d'origine si elle n'est pas reconnaissable comme une date. */
+    private String convertirDateVersIso(String saisie) {
+        if (saisie == null) {
+            return "";
+        }
+        String texte = saisie.trim();
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("^(\\d{1,2})[/\\.\\-](\\d{1,2})[/\\.\\-](\\d{4})$")
+                .matcher(texte);
+        if (m.matches()) {
+            return String.format(java.util.Locale.US, "%s-%s-%s",
+                    m.group(3),
+                    String.format("%02d", Integer.parseInt(m.group(2))),
+                    String.format("%02d", Integer.parseInt(m.group(1))));
+        }
+        return saisie;
     }
 
     public int modifierVendeur(Vendeur vendeur) {

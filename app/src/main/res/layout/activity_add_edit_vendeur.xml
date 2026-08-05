@@ -53,8 +53,7 @@
                         android:contentDescription="@string/photo_vendeur"
                         android:padding="30dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_person_placeholder"
-                        app:tint="@color/colorPrimary" />
+                        android:src="@drawable/ic_person_placeholder" />
 
                 </androidx.cardview.widget.CardView>
 

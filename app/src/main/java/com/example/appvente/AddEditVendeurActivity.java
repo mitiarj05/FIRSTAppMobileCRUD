@@ -87,7 +87,7 @@ public class AddEditVendeurActivity extends AppCompatActivity {
                     } catch (SecurityException ignored) {
                     }
                     photoUri = uri;
-                    imgPhoto.setImageURI(photoUri);
+                    afficherPhoto(photoUri);
                     txtChoisirPhotoLabel.setText(R.string.changer_photo);
                 }
             });
@@ -174,10 +174,7 @@ public class AddEditVendeurActivity extends AppCompatActivity {
             String photoExistante = intent.getStringExtra(MainActivity.EXTRA_PHOTO);
             if (photoExistante != null && !photoExistante.isEmpty()) {
                 photoUri = Uri.parse(photoExistante);
-                try {
-                    imgPhoto.setImageURI(photoUri);
-                } catch (Exception ignored) {
-                }
+                afficherPhoto(photoUri);
                 txtChoisirPhotoLabel.setText(R.string.changer_photo);
             }
             setTitle(R.string.modifier_vendeur);
@@ -205,10 +202,7 @@ public class AddEditVendeurActivity extends AppCompatActivity {
         String photoTexte = savedInstanceState.getString(KEY_PHOTO_URI, "");
         if (!photoTexte.isEmpty()) {
             photoUri = Uri.parse(photoTexte);
-            try {
-                imgPhoto.setImageURI(photoUri);
-            } catch (Exception ignored) {
-            }
+            afficherPhoto(photoUri);
             txtChoisirPhotoLabel.setText(R.string.changer_photo);
         }
 
@@ -232,6 +226,16 @@ public class AddEditVendeurActivity extends AppCompatActivity {
 
     private String texteEditNom() {
         return editNom.getText() == null ? "" : editNom.getText().toString();
+    }
+
+    /** Affiche la photo choisie. Retire le padding de l'aperçu pour que la photo
+     *  remplisse tout le cercle (le padding sert uniquement à réduire l'icône placeholder). */
+    private void afficherPhoto(Uri uri) {
+        imgPhoto.setPadding(0, 0, 0, 0);
+        try {
+            imgPhoto.setImageURI(uri);
+        } catch (Exception ignored) {
+        }
     }
 
     /** Vrai si le formulaire contient des changements non enregistrés par rapport à l'état de départ. */
